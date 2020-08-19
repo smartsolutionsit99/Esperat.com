@@ -36,6 +36,7 @@ header .logo img {
     color:#2E3092;
     direction:rtl;
     text-align:right;
+    direction:rtl;
 }
 
 rtl{
@@ -141,4 +142,17 @@ h1, .h1 {
     color: #fff;
     background-color:#007bff;
     border-color:#2E3092;
+}
+
+.container-fluid {
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    direction: rtl;
+}
+
+.float-right {
+    float: r!important;
 }
