@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <template id="assets_backend_esperat" name="esperat assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+            </xpath>
+        </template>
+        <template id="assets_frontend_esperat" name="esperat_frontend assets" inherit_id="web.assets_frontend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/website_esperat/static/src/js/toast.min.js"></script>
+                <script type="text/javascript" src="/website_esperat/static/src/js/website_form.js"></script>
+                <link rel="stylesheet" type="text/css" href="/website_esperat/static/src/css/style.css"/>
+            </xpath>
+        </template>
+
+
+        <record id="view_esperat" model="ir.ui.view">
+            <field name="name">Esperat</field>
+            <field name="type">qweb</field>
+            <field name="key">website_esperat.esperat</field>
+            <field name="arch" type="xml">
+                <t name="Esperat" t-name="website_esperat.esperat">
+                    <t t-call="website.layout">
+                        <div id="wrap">
+                            <div class="oe_structure">
+                                <section class="pt8 pb8">
+                                    <div class="container">
+                                        <div class="row s_nb_column_fixed">
+                                            <div class="col-lg-12 s_title pt16 pb16">
+                                                <h1>Esperat</h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                            <div>
+                                <form id="esperat-form" action="/website_form/" method="post" data-model_name="spare.order" data-success_page="/esperat" class="s_website_form container-fluid mt32" enctype="multipart/form-data" data-editable-form="false">
+                                    <!-- orderline (to be hodden)-->
+                                    <div class="form-group row form-field" style="display:none;">
+                                        <div class="col-lg-3 col-md-4 text-left-p20">
+                                            <label class=" text-left-p20" for="line_string">Lines String</label>
+                                        </div>
+                                        <div class="col-lg-4 col-md-8">
+                                            <input type="line_string" class="form-control o_website_form_input"  name="line_string" />
+                                        </div>
+                                    </div>
+                                    <!-- Category  -->
+                                    <div class=" rtl form-group row form-field o_website_form_required">
+                                        <label class="rtl col-lg-3 col-md-4 col-form-label" for="category">Select Spare Category</label>
+                                        <div class="col-lg-7 col-md-8">
+                                            <select name="category"  class="category rtl o_website_form_input form-control"  onchange="changeCategory(this.value)">
+                                                <option  value="car">Car</option>
+                                                <option  value="truck">Truck</option>
+                                                <option  value="heavy_equipment">Heavy Equipment</option>
+                                                <option  value="generator">Generators</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="rtl btn-add">
+                                        <button class="btn btn-primary btn-block" type="button" data-toggle="modal" data-target="#addLineSpare">
+                                            <span>اضافة قطع غيار</span>
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+
+                                    <!--          Customer Phone                     -->
+                                    <div class="rtl form-group row form-field o_website_form_required">
+                                        <label class="rtl col-lg-3 col-md-4 col-form-label" for="customer_phone">Phone</label>
+                                        <div class="col-lg-7 col-md-8">
+                                            <input type="text" class="rtl form-control o_website_form_input" name="customer_phone" required=""/>
+                                        </div>
+                                    </div>
+                                    <!--          Customer Name                     -->
+                                    <div class="rtl form-group row form-field o_website_form_required">
+                                        <label class="rtl col-lg-3 col-md-4 col-form-label" for="customer_name">Full Name</label>
+                                        <div class="col-lg-7 col-md-8">
+                                            <input type="text" class="rtl form-control o_website_form_input" name="customer_name" required="" />
+                                        </div>
+                                    </div>
+                                    <!--          Customer Address                     -->
+                                    <div class="rtl form-group row form-field o_website_form_required">
+                                        <label class="rtl col-lg-3 col-md-4 col-form-label" for="customer_phone">Address</label>
+                                        <div class="col-lg-7 col-md-8">
+                                            <input type="text" class="rtl form-control o_website_form_input" name="customer_address" required=""/>
+                                        </div>
+                                    </div>
+                                    <div class="rtl btn-form">
+                                        <button type="button" class="btn btn-primary btn-block o_website_form_send">
+                                            <span>Send</span>
+                                            <i class="fa fa-check-square"></i>
+                                        </button>
+                                        <span id="o_website_form_result"></span>
+
+                                        <!--           View My Cart                     -->
+                                        <button class="float-cart btn btn-primary btn-block openMyCart"  type="button" data-toggle="modal" data-target="#viewMyCart">
+<!--                                            <span>My Cart</span>-->
+                                            <span id="cart-number">0</span>
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- Modal Spare Lines -->
+                            <div class="modal fade rtl" id="addLineSpare" tabindex="-1" role="dialog" aria-labelledby="Spare Part" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="rtl modal-title" id="exampleModalLongTitle">New Spare Part</h5>
+                                            <button type="button" class="rtl close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                        <div class="rtl modal-body">
+                                            <form name="spareform" >
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <!-- part_no-->
+                                                <div class="rtl form-group row form-field o_website_form_required">
+                                                    <div class="col-md-4 text-left-p20">
+                                                        <label  class="rtl text-left-p20" for="part_no">Part Number</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <input  type="text" class="rtl form-control o_website_form_input" name="part_no"/>
+                                                    </div>
+                                                </div>
+                                                <!-- serial-->
+                                                <div class="rtl form-group row form-field o_website_form_required">
+                                                    <div class="col-md-4 text-left-p20">
+                                                        <label  class="rtl text-left-p20" for="serial">Serial/Engine/Vin Number</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <input  type="text" class="rtl form-control o_website_form_input" name="serial"/>
+                                                    </div>
+                                                </div>
+                                                <!-- part_name-->
+                                                <div class="rtl form-group row form-field o_website_form_required">
+                                                    <div class="rtl col-md-4 text-left-p20">
+                                                        <label  class="rtl text-left-p20" for="part_name">Part Name</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <input  type="text" class="rtl form-control o_website_form_input" name="part_name"/>
+                                                    </div>
+                                                </div>
+                                                <!-- maker_id-->
+                                                <div class="rtl form-group row form-field o_website_form_required">
+                                                    <div class="rtl col-md-4 text-left-p20">
+                                                        <label  class="rtl text-left-p20" for="maker_id">Maker</label>
+                                                    </div>
+                                                    <div class="rtl col-md-4 col-sm-8">
+                                                        <select id="maker_id_select" name="maker_id" class="rtl o_website_form_input form-control" onchange="changeMaker(this.value)">
+                                                            <t t-foreach="request.env['maker.maker'].sudo().search([])" t-as="maker_id" >
+                                                                <option  class="rtl" t-att-category="maker_id.category" t-att-value="maker_id.name">
+                                                                    <span  t-esc="maker_id.name" ></span>
+                                                                </option>
+                                                            </t>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <!-- model_id-->
+                                                <div id="model_id_input" class="rtl form-group row form-field o_website_form_required">
+                                                    <div class="rtl col-md-4 text-left-p20">
+                                                        <label  class="rtl text-left-p20" for="maker_id">Model</label>
+                                                    </div>
+                                                    <div class="rtl col-md-4 col-sm-8">
+                                                        <select id="model_id_select" name="model_id" class="rtl o_website_form_input form-control">
+                                                            <t t-foreach="request.env['model.model'].sudo().search([])" t-as="model_id">
+                                                                <option class="rtl" t-att-maker_id="model_id.maker_id.name" t-att-value="model_id.name">
+                                                                    <span  t-esc="model_id.name" ></span>
+                                                                </option>
+                                                            </t>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <!-- model_text-->
+                                                <div id="model_text_input" class="rtl form-group row form-field o_website_form_required">
+                                                    <div class="rtl col-md-4 text-left-p20">
+                                                        <label  class="rtl text-left-p20" for="part_name">Model Name</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <input  type="text" class="rtl form-control o_website_form_input" name="model_text"/>
+                                                    </div>
+                                                </div>
+                                                <!-- year-->
+                                                <div class="rtl form-group row form-field o_website_form_required">
+                                                    <div class="rtl col-md-4 text-left-p20">
+                                                        <label  class="rtl text-left-p20" for="year">Year</label>
+                                                    </div>
+                                                    <div class="rtl col-md-4 col-sm-8">
+                                                        <select name="year" class="rtl o_website_form_input form-control">
+                                                            <option value="2000"><span>2000</span></option>
+                                                            <option value="2001"><span>2001</span></option>
+                                                            <option value="2002"><span>2002</span></option>
+                                                            <option value="2003"><span></span>2003</option>
+                                                            <option value="2004"><span>2004</span></option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <!-- Qty-->
+                                                <div class="rtl form-group row form-field o_website_form_required">
+                                                    <div class="rtl col-md-4 text-left-p20">
+                                                        <label  class="rtl text-left-p20" for="qty">Quantity</label>
+                                                    </div>
+                                                    <div class="rtl col-md-8">
+                                                        <input  type="number" value="1" class="rtl form-control o_website_form_input" name="qty"/>
+                                                    </div>
+                                                </div>
+                                                <span id="o_website_form_result"/>
+                                                <div>
+                                                <div class="modal-footer">
+                                                    <a href="javascript:spareSubmitForm()"  class="rtl btn btn-primary">Save</a>
+                                                    <button type="button" class="rtl btn btn-danger" data-dismiss="modal">Close</button>
+                                                </div>
+                                                </div>
+                                                <script type="text/javascript">
+                                                    function spareSubmitForm(){
+                                                        var data = {}
+                                                        data['part_no'] = $('input[name=part_no]').val();
+                                                        data['serial'] = $('input[name=serial]').val();
+                                                        data['part_name'] = $('input[name=part_name]').val();
+                                                        data['maker_id'] = $('select[name=maker_id]').val();
+                                                        data['model_id'] = $('select[name=model_id]').val();
+                                                        data['model_text'] = $('input[name=model_text]').val();
+                                                        data['qty'] = $('input[name=qty]').val();
+                                                        data['year'] = $('select[name=year]').val();
+
+                                                        if ( $('input[name=line_string]').val() == ''){
+                                                            var line_val = {};
+                                                            line_val[0] = data;
+                                                            $('input[name=line_string]').val(JSON.stringify(line_val));
+                                                        }
+                                                        else{
+                                                            var lineJson = JSON.parse($('input[name=line_string]').val())
+                                                            lineJson[ Object.keys(lineJson).length] = data;
+                                                            $('input[name=line_string]').val(JSON.stringify(lineJson));
+                                                        }
+                                                        $('input[name=part_no]').val('');
+                                                        $('input[name=serial]').val('');
+                                                        $('input[name=part_name]').val('');
+                                                        $('input[name=model_text]').val('');
+                                                        $('input[name=qty]').val('');
+                                                        $('#addLineSpare').modal('hide');
+                                                        $('#addLineSpare').modal('hide');
+                                                        $('#cart-number').text(Number($('#cart-number').text())+1);
+                                                        iqwerty.toast.toast('تمت الاضافه الى السلة بنجاح');
+                                                    }
+                                                    function changeCategory(value){
+                                                        Array.from(document.querySelector("#maker_id_select").options).forEach(function(option_element) {
+                                                            var c = 0;
+                                                            if (option_element.getAttribute('category') === value) {
+                                                                c = c + 1 ;
+                                                                option_element.style = 'display:block'
+                                                                if (c == 1){option_element.selected = 'selected'}
+                                                            } else {
+                                                                option_element.style = 'display:none'
+                                                            }
+                                                        });
+                                                        if ( value === 'car'){
+                                                            document.getElementById("model_id_input").style.display = "flex";
+                                                            document.getElementById("model_text_input").style.display = "none";
+                                                        }
+                                                        else{
+                                                            document.getElementById("model_id_input").style.display = "none";
+                                                            document.getElementById("model_text_input").style.display = "flex";
+                                                        }
+                                                    }
+                                                    function changeMaker(value){
+                                                        Array.from(document.querySelector("#model_id_select").options).forEach(function(option_element) {
+                                                            var c = 0;
+                                                            if (option_element.getAttribute('maker_id') === value) {
+                                                                c = c + 1 ;
+                                                                option_element.style = 'display:block'
+                                                                if (c == 1){option_element.selected = 'selected'}
+                                                            } else {
+                                                                option_element.style = 'display:none'
+                                                            }
+                                                        });
+                                                    }
+
+                                                    $( document ).ready(function() {
+                                                        changeCategory($("select.category").children("option:selected").val());
+                                                    });
+                                                </script>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal View Cart -->
+                            <div class="rtl modal fade" id="viewMyCart" tabindex="-1" role="dialog" aria-labelledby="My Cart" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="rtl modal-title" id="exampleModalLongTitle">My Cart</h5>
+                                            <button type="button" class="rtl close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <table id="spareCartTable" class="rtl table table-striped table-responsive">
+                                                <thead>
+                                                    <th>#</th>
+                                                    <th class="text-center">Part No.</th>
+                                                    <th class="text-center">Serial/Engine/Vin No.</th>
+                                                    <th class="text-center">Part Name</th>
+                                                    <th class="text-center">Maker</th>
+                                                    <th class="text-center">Model</th>
+                                                    <th class="text-center">Year</th>
+                                                    <th class="text-center">Quantity</th>
+                                                    <th></th>
+                                                </thead>
+                                                <tbody class="rtl cart-line" id="cart-line">
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="rtl btn btn-danger" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                        <script type="text/javascript">
+                                            $(document).on("click", ".openMyCart", function () {
+                                                if ($('input[name=line_string]').val()==''){
+                                                }
+                                                else{
+                                                    document.getElementById("cart-line").innerHTML = "";
+                                                    var lineJson = JSON.parse($('input[name=line_string]').val());
+                                                    var count =  Object.keys(lineJson).length;
+                                                    var c = 0;
+                                                    for (var key in lineJson){
+                                                        var c = c+1 ;
+                                                        var s1 = '<tr>' ;
+                                                        var s2 = '<td><span>'+ c +'</span></td>' ;
+                                                        var s3 = '<td><span>'+ lineJson[key]['part_no'] +'</span></td>' ;
+                                                        var s4 = '<td><span>'+ lineJson[key]['serial'] +'</span></td>' ;
+                                                        var s5 = '<td><span>'+ lineJson[key]['part_name'] +'</span></td>' ;
+                                                        var s6 = '<td><span>'+ lineJson[key]['maker_id'] +'</span></td>' ;
+                                                        var s7 = '<td><span>'+ lineJson[key]['model_id'] +'</span></td>' ;
+                                                        var s8 = '<td><span>'+ lineJson[key]['year'] +'</span></td>' ;
+                                                        var s9 = '<td><span>'+ lineJson[key]['qty'] +'</span></td>' ;
+                                                        var s10 = '<td><a onclick="deleteRow(this.parentNode.parentNode.rowIndex)" class="fa fa-trash-o"></a></td>' ;
+                                                        var s11 = '</tr>' ;
+                                                        $('.cart-line').append(s1+s2+s3+s4+s5+s6+s7+s8+s9+s10+s11) ;
+                                                    }
+                                                }
+                                            });
+                                            function deleteRow(i){
+                                                console.log(i);
+                                                document.getElementById('spareCartTable').deleteRow(i);
+                                                var lineJson = JSON.parse($('input[name=line_string]').val());
+                                                delete lineJson[i-1];
+                                                if (Object.keys(lineJson).length == 0){
+                                                    $('input[name=line_string]').val('');
+                                                }
+                                                else{
+                                                    $('input[name=line_string]').val(JSON.stringify(lineJson));
+                                                }
+                                                $('#cart-number').text(Number($('#cart-number').text())-1);
+                                                iqwerty.toast.toast('تم الحذف من السلة بنجاح');
+                                            }
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </field>
+        </record>
+
+        <record id="esperat_page" model="website.page">
+            <field name="url">/esperat</field>
+            <field name="website_published">True</field>
+            <field name="view_id" ref="website_esperat.view_esperat"/>
+        </record>
+
+        <record id="menu_esperat" model="website.menu">
+            <field name="name">Esperat</field>
+            <field name="url">/esperat</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">1</field>
+        </record>
+
+    <!--        remove footer-->
+        <template id="esperate_footer" inherit_id="portal.frontend_layout">
+            <xpath expr="//footer" position="replace">
+                <footer class="esperat_color o_footer rtl">
+                    <div class="container mt16 mb16" id="footer">
+                        <div class="float-right mb16" t-ignore="true" t-if="not editable">
+                            كل الحقوق والنشر محفوظة لموقع إسبيرات©   <a target="_blank" href="http://www.esperat.com">esperat.com</a>
+                        </div>
+                    </div>
+                </footer>
+            </xpath>
+            <xpath expr="//nav/div[@class='container']" position="replace">
+                <div class="container">
+                    <a href="/esperat" class="logo">
+                        <img src="/website_esperat/static/src/img/logo-comp.png" t-att-alt="'Logo of %s' % res_company.name" t-att-title="res_company.name"/>
+                    </a>
+<!--                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#top_menu_collapse">-->
+<!--                        <span class="navbar-toggler-icon"/>-->
+<!--                    </button>-->
+                    <div class="collapse navbar-collapse" id="top_menu_collapse">
+                        <!-- FIXME We want menu to open to the right by default (except cases handled in JS) -->
+                        <ul class="nav navbar-nav ml-auto text-right" id="top_menu">
+                            <li class="nav-item divider" t-ignore="true" t-if="not user_id._is_public()"/>
+                            <li class="nav-item dropdown" t-ignore="true" t-if="not user_id._is_public()">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                                    <b>
+                                        <span t-esc="user_id.name[:23] + '...' if user_id.name and len(user_id.name) &gt; 25 else user_id.name"/>
+                                    </b>
+                                </a>
+                                <div class="dropdown-menu js_usermenu" role="menu">
+                                    <a id="o_logout" class="dropdown-item" t-attf-href="/web/session/logout?redirect=/" role="menuitem">Logout</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="website_esperat.model_spare_order" model="ir.model">
+            <field name="website_form_access">True</field>
+            <field name="website_form_label">Create a Spare Order</field>
+        </record>
+
+        <function model="ir.model.fields" name="formbuilder_whitelist">
+            <value>spare.order</value>
+            <value eval="[
+                'category',
+                'customer_phone',
+                'customer_name',
+                'customer_address',
+                'line_string',
+            ]"/>
+        </function>
+    </data>
+
+    <data noupdate="1">
+        <record id="action_open_esperat_website" model="ir.actions.act_url">
+            <field name="name">Esperat Form</field>
+            <field name="target">self</field>
+            <field name="url">/esperat</field>
+        </record>
+
+    </data>
+</odoo>

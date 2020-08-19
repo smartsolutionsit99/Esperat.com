@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+spare_part_order_manager,spare.part.order.manager,website_esperat.model_spare_order,website_esperat.group_spare_part_manager,1,1,1,1
+spare_part_order_line_manager,spare.part.order.line.manager,website_esperat.model_spare_order_line,website_esperat.group_spare_part_manager,1,1,1,1
+spare_part_stage_manager,spare.part.stage.manager,website_esperat.model_spare_order_stage,website_esperat.group_spare_part_manager,1,1,1,1
+spare_part_maker_manager,spare.part.maker.manager,website_esperat.model_maker_maker,website_esperat.group_spare_part_manager,1,1,1,1
+spare_part_model_manager,spare.part.model.manager,website_esperat.model_model_model,website_esperat.group_spare_part_manager,1,1,1,1

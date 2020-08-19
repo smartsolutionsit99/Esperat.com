@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <record id="spare_order_form_view" model="ir.ui.view">
+            <field name="name">spare.order.form</field>
+            <field name="model">spare.order</field>
+            <field name="arch" type="xml">
+                <form string="Spare Parts Order">
+                    <header>
+                        <field name="stage_id" widget="statusbar" options="{'clickable': '1'}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Customer Information">
+                                <field name="customer_name"/>
+                                <field name="customer_phone"/>
+                                <field name="customer_address"/>
+                            </group>
+                            <group string="Category">
+                                <field name="category"/>
+                                <field name="create_date"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="line_ids" nolabel="1">
+                                <tree editable="top">
+                                    <field name="part_no"/>
+                                    <field name="serial"/>
+                                    <field name="part_name"/>
+                                    <field name="maker_id"/>
+                                    <field name="model_id"/>
+                                    <field name="model_text"/>
+                                    <field name="year"/>
+                                    <field name="vendor_id"/>
+                                    <field name="qty"/>
+                                    <field name="price"/>
+                                    <field name="total" sum="total"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="spare_part_tree_view" model="ir.ui.view">
+            <field name="name">spare.order.tree</field>
+            <field name="model">spare.order</field>
+            <field name="arch" type="xml">
+                <tree string="Spare Parts Order">
+                    <field name="name"/>
+                    <field name="category"/>
+                    <field name="customer_name"/>
+                    <field name="customer_phone"/>
+                    <field name="customer_address"/>
+                    <field name="create_date"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="spare_part_act_window" model="ir.actions.act_window">
+            <field name="name">Spare Parts Order</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">spare.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="spare_part_menu_root" name="Spare Parts" sequence="10" groups="website_esperat.group_spare_part_manager"/>
+        <menuitem id="spare_part_order_menu" name="Spare Parts Order" parent="spare_part_menu_root" action="spare_part_act_window" groups="website_esperat.group_spare_part_manager"/>
+
+        <record id="spare_order_stage_action" model="ir.actions.act_window">
+            <field name="name">Stages</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">spare.order.stage</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_spare_order_config" name="Configuration" parent="spare_part_menu_root" sequence="100" groups="website_esperat.group_spare_part_manager"/>
+        <menuitem id="spare_parts_stage_menu" name="Stages" parent="menu_spare_order_config" action="spare_order_stage_action" sequence="1" groups="website_esperat.group_spare_part_manager"/>
+
+        <record id="maker_maker_view_form" model="ir.ui.view">
+            <field name="name">maker.maker.view.form</field>
+            <field name="model">maker.maker</field>
+            <field name="arch" type="xml">
+                <form string="Makers">
+                    <sheet>
+                        <div class="oe_title">
+                            <field name="image" widget="image" class="oe_avatar"/>
+                        </div>
+                        <group>
+                            <field name="name"/>
+                            <field name="category"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="maker_maker_view_tree" model="ir.ui.view">
+            <field name="name">maker.maker.view_tree</field>
+            <field name="model">maker.maker</field>
+            <field name="arch" type="xml">
+                <tree string="Makers">
+                    <field name="name"/>
+                    <field name="category"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="maker_maker_action" model="ir.actions.act_window">
+            <field name="name">Makers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">maker.maker</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="maker_maker_menu=" parent="menu_spare_order_config" action="maker_maker_action" sequence="2"/>
+
+        <record id="model_model_view_form" model="ir.ui.view">
+            <field name="name">model.model.view_form</field>
+            <field name="model">model.model</field>
+            <field name="arch" type="xml">
+                <form string="Models">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="maker_id"/>
+                            <field name="category"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="model_model_view_tree" model="ir.ui.view">
+            <field name="name">model.model.view.tree</field>
+            <field name="model">model.model</field>
+            <field name="arch" type="xml">
+                <tree string="Model">
+                    <field name="name"/>
+                    <field name="maker_id"/>
+                    <field name="category"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="model_model_action" model="ir.actions.act_window">
+            <field name="name">Model</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">model.model</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="model_model_menu" name="Model" parent="menu_spare_order_config" action="model_model_action" sequence="3"/>
+
+</odoo>
